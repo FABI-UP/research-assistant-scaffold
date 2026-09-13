@@ -1,0 +1,11 @@
+# The index of every project this assistant works on.
+# Exactly one project may have `active: true`.
+schema_version: 1
+projects: []
+
+# Example of an entry — delete this comment block once you add a real one.
+#   - slug: first-question          # directory name under projects/; lowercase, hyphens
+#     title: A short human title
+#     active: true
+#     created: 2026-01-01
+#     current_iteration: "001"

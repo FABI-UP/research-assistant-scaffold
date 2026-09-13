@@ -1,0 +1,23 @@
+schema_version: 1
+number: "001"
+opened: {{DATE}}
+
+# One of: planned survey implement experiment analyze conclude completed
+status: planned
+
+# What this iteration asks. Narrower than the project question.
+question: >-
+  {{ITERATION_QUESTION}}
+
+# Decided BEFORE the data are seen. What result would count as which answer?
+# Fixing this first is what stops an assistant from finding whichever pattern it was pointed at.
+success_criterion: >-
+  {{ITERATION_CRITERION}}
+
+# Filled in as the loop runs.
+literature: literature.yaml
+experiments: experiments.yaml
+metrics: metrics.yaml
+findings: findings.md
+
+open_items: []

@@ -1,0 +1,32 @@
+# Scheduler-neutral job template.
+# Generate a real submission script from this with scripts/make_job.sh, or fill it in by hand.
+# Keep the directive block for YOUR scheduler and delete the others. If you have no scheduler,
+# delete all of them and run it as a plain shell script.
+
+# --- SLURM -------------------------------------------------------------------
+#SBATCH --job-name={{JOB_NAME}}
+#SBATCH --account={{ACCOUNT}}
+#SBATCH --partition={{QUEUE}}
+#SBATCH --cpus-per-task={{THREADS}}
+#SBATCH --mem={{MEMORY}}
+#SBATCH --time={{WALLTIME}}
+#SBATCH --output={{LOGDIR}}/{{JOB_NAME}}.%j.out
+
+# --- PBS / Torque ------------------------------------------------------------
+##PBS -N {{JOB_NAME}}
+##PBS -P {{ACCOUNT}}
+##PBS -q {{QUEUE}}
+##PBS -l select=1:ncpus={{THREADS}}:mem={{MEMORY}}
+##PBS -l walltime={{WALLTIME}}
+##PBS -o {{LOGDIR}}/{{JOB_NAME}}.out
+
+# --- SGE ---------------------------------------------------------------------
+##$ -N {{JOB_NAME}}
+##$ -pe smp {{THREADS}}
+##$ -l h_rt={{WALLTIME}}
+##$ -o {{LOGDIR}}/{{JOB_NAME}}.out
+
+set -eu
+cd {{WORKDIR}}
+{{ENV_ACTIVATE}}
+sh src/steps/{{STEP}} {{CONFIG}}

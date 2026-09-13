@@ -1,0 +1,42 @@
+cff-version: 1.2.0
+title: Research Assistant Scaffold
+message: >-
+  If you use this kit, please cite both the software and the paper it accompanies.
+type: software
+authors:
+  - given-names: Bernard
+    family-names: Slippers
+    affiliation: >-
+      Forestry and Agricultural Biotechnology Institute (FABI),
+      University of Pretoria, South Africa
+    # orcid: 'https://orcid.org/0000-0000-0000-0000'   # uncomment and add yours
+repository-code: 'https://github.com/FABI-UP/research-assistant-scaffold'
+abstract: >-
+  A domain-agnostic scaffold and agent skill for working with an agentic,
+  file-aware AI research assistant across many sessions, machines and projects.
+  Ships two profiles: a repository profile for work that runs, with a state
+  model, step contract, configuration layer and verification tooling; and a
+  library profile for work that accumulates, with a naming convention, an index
+  ledger, intake discipline and a checker that recounts a collection from the
+  filesystem. Contains no domain-specific science.
+keywords:
+  - research software engineering
+  - AI agents
+  - reproducibility
+  - research data management
+  - open science
+license:
+  - MIT
+  - CC-BY-4.0
+version: 0.2.0
+date-released: '2026-09-13'
+references:
+  - type: article
+    title: >-
+      Ten simple rules for working with an AI research assistant across your projects
+    authors:
+      - given-names: Bernard
+        family-names: Slippers
+    year: 2026
+    notes: >-
+      Update with the full author list, journal, volume and DOI on acceptance.

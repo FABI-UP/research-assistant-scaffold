@@ -1,0 +1,29 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright (c) 2026 Bernard Slippers and contributors
+
+The prose documentation in this repository — everything under `docs/`, together
+with `README.md` — is licensed under the Creative Commons Attribution 4.0
+International License.
+
+You are free to share and adapt this material for any purpose, including
+commercially, provided you give appropriate credit, link to the licence, and
+indicate if changes were made.
+
+Human-readable summary:
+  https://creativecommons.org/licenses/by/4.0/
+
+Full legal code:
+  https://creativecommons.org/licenses/by/4.0/legalcode
+
+The licence is identified here by reference rather than reproduced, so that the
+canonical text always governs. If you prefer a self-contained copy, download the
+legal code from the URL above and save it alongside this file.
+
+Suggested attribution:
+
+  Slippers B and contributors. Research Assistant Scaffold.
+  https://github.com/FABI-UP/research-assistant-scaffold
+
+The code and templates in `scaffold/`, `scaffold-library/` and `skills/` are
+licensed separately under the MIT License. See LICENSE.

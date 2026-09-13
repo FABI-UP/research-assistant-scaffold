@@ -1,0 +1,40 @@
+# Secrets — never commit. The shape of this file lives in .env.example.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Environments
+.venv/
+venv/
+renv/library/
+renv/staging/
+__pycache__/
+*.pyc
+.Rhistory
+.RData
+.Rproj.user/
+
+# Outputs and scratch — results are regenerated, not committed
+results/
+logs/
+scratch/
+*.log
+
+# Data. Add explicit exceptions for small fixtures you DO want tracked.
+data/
+!tests/fixtures/
+# Cloud-sync clients rename large multi-part downloads in ways that defeat naive
+# patterns (file.fastq-004.gz does not match *.fastq.gz). Match the stem too.
+*.fastq*
+*.fq*
+*.bam*
+*.sra*
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/

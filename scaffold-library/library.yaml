@@ -1,0 +1,27 @@
+# Conventions for this collection. scripts/check_library.sh enforces them.
+schema_version: 1
+
+name: {{LIBRARY_NAME}}
+
+# Where the items live. Themed subfolders under this directory.
+root: collection
+
+# Where new, unfiled items arrive.
+intake: intake
+
+# Filename convention, as a POSIX extended regular expression.
+# The default matches  Author_Year_keywords.ext  — for example
+#   Smith_2024_thermal_tolerance_limits.pdf
+# and allows a trailing _b, _c ... for a deliberate repeat copy of the same item.
+naming_pattern: '^[A-Za-z][A-Za-z-]*_[0-9]{4}_[A-Za-z0-9_-]+(_[b-z])?\.[A-Za-z0-9]+$'
+
+# Marker for an item that could not be identified from itself.
+# Better an honest marker than invented metadata.
+unidentified_marker: NEEDS_ID
+
+# File types that count as items. Everything else is ignored by the checker.
+item_extensions: pdf epub djvu
+
+# How often the collection should be revisited for new material, in days.
+# Effort compounds only if the collection maintains itself.
+refresh_interval_days: 30

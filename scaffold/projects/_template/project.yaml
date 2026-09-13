@@ -1,0 +1,23 @@
+# Copy this directory to projects/<your-slug>/ and fill it in.
+schema_version: 1
+slug: {{SLUG}}
+title: {{TITLE}}
+created: {{DATE}}
+
+# The standing question. Not a task — a question that evidence could answer.
+question: >-
+  {{QUESTION}}
+
+# What would have to be true for this project to be finished.
+success_criterion: >-
+  {{SUCCESS_CRITERION}}
+
+current_iteration: "001"
+
+# Domain parameters. These are the only place science enters the scaffold.
+# Add what your field needs; delete what it does not.
+parameters: {}
+
+# Things that are true about this project and easy to forget.
+# Write principles, not inventories: an inventory goes stale, a rule does not.
+constraints: []
