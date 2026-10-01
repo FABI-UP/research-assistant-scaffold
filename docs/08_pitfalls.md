@@ -51,6 +51,18 @@ surface this. The fix is a static check, not more testing: keep to POSIX shell i
 runs on more than one machine, and check it. `scripts/check_conventions.sh` does that check; the
 scaffold's own utilities are POSIX for the same reason.
 
+## Valid POSIX that one shell misreads
+
+The static check has a blind spot: code that is valid POSIX but that one real shell parses wrongly.
+`scaffold-library/scripts/check_library.sh` had a `case` statement inside `$( … )`. It passed on
+Linux, where `sh` is dash, and failed to parse on macOS, where `sh` is bash 3.2, which took the
+pattern's closing `)` as the end of the substitution. It is not a bashism, so
+`check_conventions.sh` had nothing to flag, and the library checker had never run on macOS.
+
+Testing where you wrote it does not catch this; running it on the other platform does. Run every
+check at least once on each kind of machine it is meant for. Inside `$( … )`, write `case`
+patterns with the leading parenthesis, `(pattern)`, which every POSIX shell accepts.
+
 ## `set -e` and `&&`
 
 `cmd && { ...; }` looks like a conditional and is not. When `cmd` returns non-zero, the list

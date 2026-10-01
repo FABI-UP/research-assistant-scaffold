@@ -63,7 +63,7 @@ fi
 offenders=$(printf '%s\n' "$items" | while IFS= read -r f; do
   [ -n "$f" ] || continue
   b=$(basename "$f")
-  case "$b" in *"$MARKER"*) continue ;; esac
+  case "$b" in (*"$MARKER"*) continue ;; esac
   printf '%s' "$b" | grep -qE "$PATTERN" || printf '%s\n' "${f#"$COLL"/}"
 done)
 n=$(printf '%s\n' "$offenders" | grep -c . || true)

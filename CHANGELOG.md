@@ -2,6 +2,12 @@
 
 All notable changes to this kit are recorded here. Dates are ISO-8601.
 
+## [Unreleased]
+
+- `scaffold-library/scripts/check_library.sh`: a case pattern inside a command substitution failed
+  to parse in the old bash that macOS ships as `/bin/sh`, so the library checker had never run on
+  macOS. Fixed with the POSIX leading-parenthesis form.
+
 ## [0.2.0] — 2026-09-13
 
 First public release.
