@@ -4,6 +4,8 @@ All notable changes to this kit are recorded here. Dates are ISO-8601.
 
 ## [Unreleased]
 
+- `docs/10_prompts.md`: points to PromptLab (Sharpton et al. 2026) as the task-level counterpart
+  of the project-level prompts here.
 - `scaffold-library/scripts/check_library.sh`: a case pattern inside a command substitution failed
   to parse in the old bash that macOS ships as `/bin/sh`, so the library checker had never run on
   macOS. Fixed with the POSIX leading-parenthesis form.

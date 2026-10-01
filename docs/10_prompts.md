@@ -9,6 +9,13 @@ and save the updated version it gives back at the end. Everything else below wor
 
 Treat each prompt as a starting point. Change the wording to fit your project; keep what it asks for.
 
+These prompts work at the level of the whole project. For single tasks, such as literature
+synthesis, code generation or statistical advice, they complement task-level prompt libraries such
+as [PromptLab](https://github.com/SharptonLab/PromptLab), the tested and openly licensed prompts
+that accompany Sharpton, Davis and Alexiev, *A practical risk framework for large language model use
+in life science research*, PLoS Comput Biol 22(9): e1014776 (2026),
+[doi:10.1371/journal.pcbi.1014776](https://doi.org/10.1371/journal.pcbi.1014776).
+
 | Rule | Prompt | In this kit |
 |---|---|---|
 | 1. Give the assistant a well-ordered workspace it can navigate | "Look through this folder and propose a structure and a file-naming convention for it. List every file you would move or rename, and change nothing until I have approved the list." | The layout of `scaffold/`; `library.yaml` and `check_library.sh` |
