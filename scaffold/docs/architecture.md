@@ -7,12 +7,13 @@
 
 ```
 AGENTS.md              Standing brief for the assistant. Canonical.
-CLAUDE.md              Pointer to AGENTS.md, for vendor tooling.
+CLAUDE.md, GEMINI.md   Pointers to AGENTS.md, for vendor tooling.
 configs/pipeline.yaml  Repository-wide defaults.
 projects/
   registry.yaml        Which projects exist; exactly one active.
   <slug>/
     project.yaml       The standing question and the finish line.
+    handover.md        The note the last session left for the next.
     config.yaml        Project overrides of the defaults.
     iterations/<NNN>/
       iteration.yaml   status = the program counter.
@@ -47,3 +48,5 @@ logs/                  Generated. Not committed.
 Record here anything a future reader would otherwise have to reconstruct: why a tool was chosen
 over an obvious alternative, why a threshold is what it is, what was tried and abandoned. One line
 each, dated. This section is usually the most valuable file in the repository after two years.
+
+Format: `YYYY-MM-DD: the decision; the reason; the alternative rejected.`

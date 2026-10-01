@@ -31,13 +31,12 @@ clients hold locks on files that git needs to move, and the failures are confusi
 ```sh
 git init my-research-assistant && cd my-research-assistant
 cp -R /path/to/this-kit/scaffold/. .
-git add -A && git commit -m "Scaffold from research-assistant-scaffold v0.1"
+git add -A && git commit -m "Scaffold from research-assistant-scaffold v0.2"
 ```
 
 **2. Fill in the instruction file.** Delete `.scaffold-unconfigured` when you are done — that
 marker is what tells the convention checker this is still an unfilled template, and while it exists
-the placeholder check is skipped.
- Open `AGENTS.md` and replace every `{{PLACEHOLDER}}` with your
+the placeholder check is skipped. Open `AGENTS.md` and replace every `{{PLACEHOLDER}}` with your
 answers from above. This file is the assistant's standing brief; everything else is detail.
 
 Read what you have written as if you were a capable new colleague who knows nothing about the
@@ -82,6 +81,8 @@ replace the marked block. Run it dry, then for real.
 ## Then what
 
 - Write findings into `findings.md` as you go, not at the end.
+- Record each decision in the Decisions section of `docs/architecture.md`, with its reason.
+- End each session by having the assistant rewrite `handover.md` for the project.
 - When you notice yourself explaining the same thing twice, write it into `AGENTS.md`.
 - Commit the state files with the code. They are the record of how the work went.
 

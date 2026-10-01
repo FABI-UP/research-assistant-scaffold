@@ -8,7 +8,9 @@ There is no pipeline here. Read this file first in every session.
 1. Read `library.yaml` for the conventions this collection uses.
 2. Read `INDEX.md` — what is held, where, and with what verified detail.
 3. Read `notes/00_index.md` — what has been made of it.
-4. Report in two or three sentences what the collection holds, what changed last, and what is
+4. If `HANDOVER.md` exists, read it. It is the note the last session left, possibly from another
+   machine or another assistant.
+5. Report in two or three sentences what the collection holds, what changed last, and what is
    outstanding. Then wait.
 
 ## The order of authority
@@ -74,3 +76,10 @@ quietly reconciled one is a loss.
 - Reachable from here: {{REACHABLE}}
 - Not reachable: {{NOT_REACHABLE}} — report a gap rather than substituting something plausible.
 - Must not leave this collection: {{PROTECTED}}
+
+## Ending a session
+
+If anything changed, rewrite `HANDOVER.md` before the session ends: what changed, what is in
+`intake/` or still being searched, what is unresolved, and the next action. Write it for a session
+on another machine that has never seen this conversation. Rewrite it rather than appending; the
+history is in `INDEX.md`.

@@ -9,8 +9,10 @@ Run this at the start of every session, before doing anything else:
 1. Read `projects/registry.yaml` and find the project whose `active` field is `true`.
 2. Read `projects/{slug}/project.yaml` for that project.
 3. Read the current iteration, `projects/{slug}/iterations/{NNN}/iteration.yaml`.
-4. Read the `status` field. It tells you which phase the work is in.
-5. Report, in two or three sentences, where the project stands and what the next action is.
+4. If `projects/{slug}/handover.md` exists, read it. It is the note the last session left, possibly
+   from another machine or another assistant.
+5. Read the `status` field. It tells you which phase the work is in.
+6. Report, in two or three sentences, where the project stands and what the next action is.
    Then wait. Do not begin the phase until the researcher confirms.
 
 If any of those files is missing or malformed, say so and stop. Do not guess the state.
@@ -30,6 +32,26 @@ If any of those files is missing or malformed, say so and stop. Do not guess the
 | `completed` | The iteration is closed. The next one inherits from it. | A new iteration directory exists. |
 
 Advance `status` only when the "done when" condition is actually met, and say so when you do.
+
+## Writing up
+
+`conclude` ends the analysis, not the work. Drafting and reporting follow the same rules. Every
+number in a draft comes from `metrics.yaml` or a file in `results/`, and every claim from
+`findings.md` or a source you have checked. Verify a draft as you would code, and state the scope of
+the check. If manuscripts or a reading collection sit alongside this repository, keep them in the
+library profile.
+
+## Ending a session
+
+Before a session ends, if anything changed:
+
+1. Update `status` in `iteration.yaml` if a phase was completed.
+2. Rewrite `projects/{slug}/handover.md`: what changed, what is running or waiting, where the latest
+   outputs are, what is unresolved, and the next action. Write it for a session on another machine
+   that has never seen this conversation.
+3. Add each decision taken to the Decisions section of `docs/architecture.md`, dated, with its reason
+   and the alternative that was rejected. A decision left only in the conversation is lost when the
+   conversation ends.
 
 ## The division of labour
 

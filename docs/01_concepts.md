@@ -55,6 +55,9 @@ An iteration walks these once. The next iteration inherits what the last one con
 ordinary shape of scientific work, written down so that a program can follow it, with a termination
 condition so it does not run forever.
 
+`conclude` ends the analysis, not the work. Writing up follows the same rules, and `AGENTS.md`
+says how.
+
 ## Researcher-led, agent-implemented
 
 You set the question, judge the evidence, and own the conclusions. The assistant does the
@@ -73,9 +76,10 @@ that compresses a fortnight into an afternoon compresses the propagation of a mi
 factor. Higher capability is a reason to raise your standards, not to relax them. Every convention
 in this kit is a small tax paid against that.
 
-## Where the rules come from
+## Where the rules live
 
-The numbered rules referenced in `docs/` map to the paper this kit accompanies. You do not need the
+The paper this kit accompanies states ten rules. The README has a table showing where each one
+lives in the kit, and [10. Ten prompts](10_prompts.md) gives one prompt per rule. You do not need the
 paper to use the kit; the kit is self-contained.
 
 Next: [2. Setup guide](02_setup_guide.md)

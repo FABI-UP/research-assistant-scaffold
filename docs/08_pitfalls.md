@@ -128,3 +128,5 @@ across repositories that talk to the same machine.
 None of these break anything on the day. They make every later change cost four times what it
 should, and they make a fix in one place fail to arrive in the others. One template, copied
 deliberately and updated centrally, is what this kit is for.
+
+Next: [9. The library profile](09_library_profile.md)

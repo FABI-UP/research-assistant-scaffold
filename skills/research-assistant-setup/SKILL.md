@@ -30,6 +30,8 @@ you generate anything — several of its entries are mistakes you would otherwis
 
 Check where you are running. If you can read and write files in the researcher's project
 directory, you can do this yourself. If you cannot, say so, and give them the commands to run.
+If they are working in a chat window with no file access at all, the kit cannot be installed.
+Point them to `docs/10_prompts.md`, which works without it.
 
 ## Step 1 — Interview
 
@@ -98,11 +100,14 @@ rename in bulk from filenames. Then skip to Step 3.
    materials and their steps. This file is read by an assistant that has no other context.
 4. Create the first project from `projects/_template/`, register it in `projects/registry.yaml`
    with `active: true`, and set `status: planned`.
-5. If their steps are not shell, port `src/utils/common.sh` to their language, keeping the function
+5. Start the Decisions section of `docs/architecture.md` with the decisions taken in the interview
+   (profile, language, environment, compute, scheduler, the protected list), each dated with its
+   reason. Then write the project's first `handover.md` from `projects/_template/handover.md`.
+6. If their steps are not shell, port `src/utils/common.sh` to their language, keeping the function
    names and all seven obligations in `docs/03_step_contract.md`. Do not shell out to another
    language's reader — two readers of one config disagree eventually, and silently.
-6. Keep the scheduler block they use in `templates/job.scheduler.template`; delete the others.
-7. Do **not** write any analysis steps yet. The example steps stay until there is a real workflow
+7. Keep the scheduler block they use in `templates/job.scheduler.template`; delete the others.
+8. Do **not** write any analysis steps yet. The example steps stay until there is a real workflow
    to replace them with.
 
 ## Step 3 — Verify, and show your work

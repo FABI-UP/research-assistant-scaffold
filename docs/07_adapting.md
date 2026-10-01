@@ -38,7 +38,9 @@ not instead of it — steps that remain independently runnable stay debuggable.
 
 `AGENTS.md` is canonical. Vendor-specific filenames should be one-line pointers to it, so that the
 same project works with whichever assistant you or a collaborator happen to use, and so that
-changing tools does not mean rewriting your standing brief.
+changing tools does not mean rewriting your standing brief. The kit ships `CLAUDE.md` and
+`GEMINI.md` pointers; many assistants read `AGENTS.md` directly. If yours looks for another
+filename, add a one-line pointer with that name.
 
 ## What not to change
 

@@ -7,6 +7,8 @@ Structure
 - [ ] Exactly one project has `active: true`.
 - [ ] The active project's `current_iteration` directory exists and holds `iteration.yaml`.
 - [ ] `status` is one of the seven legal values.
+- [ ] The Decisions section of `docs/architecture.md` records the interview's decisions, with reasons.
+- [ ] The active project has a `handover.md` that a session on another machine could start from.
 
 Behaviour
 

@@ -96,3 +96,5 @@ git repositories, not to document collections. Two things to know: sync clients 
 produce conflict copies, which the duplicate check will surface; and a file may be absent from one
 machine's mirror and present on another, so a count that drops by three is sync lag before it is
 loss. Flag it, wait, recount.
+
+Next: [10. Ten prompts](10_prompts.md)
