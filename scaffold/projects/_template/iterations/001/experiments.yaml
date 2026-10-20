@@ -1,0 +1,12 @@
+# Each run in this iteration, with its configuration and its outcome.
+schema_version: 1
+runs: []
+
+# Example entry — replace [] above with a list like this:
+#   - id: run-001
+#     date: 2026-01-01
+#     commit: abc1234                 # from results/reports/99_run_manifest.tsv
+#     config: projects/<slug>/config.yaml
+#     manifest: results/reports/99_run_manifest.tsv
+#     outcome: completed              # completed | failed | abandoned — and why
+#     notes: one line

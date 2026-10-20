@@ -1,7 +1,12 @@
-# Scheduler-neutral job template.
-# Generate a real submission script from this with scripts/make_job.sh, or fill it in by hand.
-# Keep the directive block for YOUR scheduler and delete the others. If you have no scheduler,
-# delete all of them and run it as a plain shell script.
+#!/bin/sh
+# Scheduler-neutral job template. Fill it in by hand, or have the assistant fill it.
+# The shebang must stay on the first line: SLURM rejects a batch script without one.
+#
+# Keep the directive block for YOUR scheduler and delete the others. Only the SLURM
+# block is live as shipped. The PBS and SGE lines are switched off with a doubled
+# '#': if you keep one of those blocks, change '##PBS' to '#PBS' or '##$' to '#$',
+# or the scheduler will ignore them and run the job with its defaults.
+# If you have no scheduler, delete all three blocks and run it as a plain shell script.
 
 # --- SLURM -------------------------------------------------------------------
 #SBATCH --job-name={{JOB_NAME}}
@@ -27,6 +32,6 @@
 ##$ -o {{LOGDIR}}/{{JOB_NAME}}.out
 
 set -eu
-cd {{WORKDIR}}
+cd "{{WORKDIR}}"
 {{ENV_ACTIVATE}}
 sh src/steps/{{STEP}} {{CONFIG}}

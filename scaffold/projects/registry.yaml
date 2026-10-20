@@ -8,4 +8,4 @@ projects: []
 #     title: A short human title
 #     active: true
 #     created: 2026-01-01
-#     current_iteration: "001"
+# The current iteration is recorded once, in projects/<slug>/project.yaml.

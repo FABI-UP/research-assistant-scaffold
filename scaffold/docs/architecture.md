@@ -7,7 +7,8 @@
 
 ```
 AGENTS.md              Standing brief for the assistant. Canonical.
-CLAUDE.md, GEMINI.md   Pointers to AGENTS.md, for vendor tooling.
+CLAUDE.md, GEMINI.md   Import AGENTS.md, for vendor tooling.
+.gitignore             Keeps .env, results/, logs/ and data out of git.
 configs/pipeline.yaml  Repository-wide defaults.
 projects/
   registry.yaml        Which projects exist; exactly one active.
@@ -31,6 +32,7 @@ scripts/
 templates/             Job submission template for {{SCHEDULER}}.
 tests/smoke_test.sh    Must pass from a clean checkout.
 results/               Generated. Not committed.
+  reports/provenance.tsv  One row per output written: step, checksum, seed, config.
 logs/                  Generated. Not committed.
 ```
 

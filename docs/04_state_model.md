@@ -13,8 +13,10 @@ projects:
     title: A short human title
     active: true
     created: 2026-01-01
-    current_iteration: "001"
 ```
+
+The current iteration is recorded once, in `project.yaml`. If a registry entry also carries a
+`current_iteration`, the validator fails when the two disagree.
 
 ## `projects/<slug>/project.yaml`
 
@@ -46,13 +48,13 @@ inventories.
 Where this attempt stands. `status` is the program counter, and it is the field the assistant reads
 to know what to do.
 
-The companion files fill up as the loop turns:
+The companion files ship in the template and fill up as the loop turns:
 
 | File | Holds |
 |---|---|
 | `literature.yaml` | What was actually read, not what was found |
 | `experiments.yaml` | Each run, with its configuration and its outcome |
-| `metrics.yaml` | The numbers, with an evidence tier on each |
+| `metrics.yaml` | The numbers, with an evidence tier on each; the validator fails a metric without one |
 | `findings.md` | What was learned, what was wrong, what to do next |
 
 ## Why a `success_criterion` in both
@@ -67,8 +69,10 @@ the same exercise, and an assistant will happily help you write it afterwards.
 sh scripts/validate_state.sh
 ```
 
-Checks exactly one active project, that every project's `current_iteration` exists, that `status`
-is one of the seven legal values, and that no placeholders remain. Run it whenever a session ends
+Checks exactly one active project, that every registered project exists, that every project's
+`current_iteration` exists and agrees with the registry, that `status` is one of the seven legal
+values, that no placeholders remain in `project.yaml` or `iteration.yaml`, that an iteration past
+`survey` has a success criterion, and that every metric carries an evidence tier. Run it whenever a session ends
 oddly. Schemas drift silently otherwise, and a drifted schema means an assistant that reads the
 state wrongly without saying so.
 

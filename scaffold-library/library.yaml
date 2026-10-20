@@ -12,8 +12,10 @@ intake: intake
 # Filename convention, as a POSIX extended regular expression.
 # The default matches  Author_Year_keywords.ext  — for example
 #   Smith_2024_thermal_tolerance_limits.pdf
-# and allows a trailing _b, _c ... for a deliberate repeat copy of the same item.
-naming_pattern: '^[A-Za-z][A-Za-z-]*_[0-9]{4}_[A-Za-z0-9_-]+(_[b-z])?\.[A-Za-z0-9]+$'
+#   van_der_Merwe_2021_field_survey.pdf      (multi-part surnames are allowed)
+# Use ASCII letters: write Muller or Mueller for Müller, OBrien for O'Brien.
+# A deliberate repeat copy of the same item takes a trailing _b, _c ...
+naming_pattern: '^[A-Za-z][A-Za-z-]*(_[A-Za-z][A-Za-z-]*)*_[0-9]{4}_[A-Za-z0-9_-]+\.[A-Za-z0-9]+$'
 
 # Marker for an item that could not be identified from itself.
 # Better an honest marker than invented metadata.

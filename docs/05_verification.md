@@ -24,9 +24,16 @@ Tag each difference as *update the document*, *fix the code*, or *documented, no
 
 ## Provenance
 
-Every result records what produced it: inputs, parameters, seed, software versions, the commit, and
-whether the tree was dirty. `src/steps/99_report.sh` writes a starting version. The test is simple —
-could someone re-run this in a year and know whether they got the same thing?
+Every result records what produced it. `end_step` appends a row to
+`results/reports/provenance.tsv` for each output a step writes: the time, the step, the file, its
+checksum, the seed and the config. `src/steps/99_report.sh` then writes the run manifest — seed,
+config files and their checksums, the system, the commit and whether the tree was dirty, the
+version of each tool listed in `provenance.tools`, and every table with its checksum.
+
+It is also a guard. If any table has no provenance row, or no longer matches the row its step
+wrote, the report fails and says which. A table edited by hand, or written by something that went
+around the step contract, cannot reach the manifest. The test is simple — could someone re-run
+this in a year and know whether they got the same thing?
 
 ## Tiering
 

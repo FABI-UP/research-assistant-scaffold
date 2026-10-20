@@ -38,10 +38,12 @@ so `true` comes back as the string `True` and an absent value as `None`; a text-
 returns `true` and an empty string. Every comparison downstream then behaves differently depending
 on what happens to be installed.
 
-Building this kit reproduced the bug within an hour of writing the second reader. The fix is not to
-be careful: it is to normalise at the boundary and then **test that the two readers agree**, which
-`tests/smoke_test.sh` now does for every key the scaffold uses. If you only ever have one reader,
-keep it that way.
+Building this kit reproduced the bug within an hour of writing the second reader. Normalising at
+the boundary and testing that the readers agreed was not enough: the test passed on machines
+without the YAML library, where it compared the fallback with itself, and the fallback still read
+four-space indentation as a missing key and returned the default. The kit now has one reader. It
+reads a small, stated subset of YAML and stops with a line number on anything else. If you only
+ever have one reader, keep it that way.
 
 ## Host-difference blindness
 
@@ -60,14 +62,18 @@ pattern's closing `)` as the end of the substitution. It is not a bashism, so
 `check_conventions.sh` had nothing to flag, and the library checker had never run on macOS.
 
 Testing where you wrote it does not catch this; running it on the other platform does. Run every
-check at least once on each kind of machine it is meant for. Inside `$( … )`, write `case`
+check at least once on each kind of machine it is meant for. The kit's CI now runs every test on
+Linux and macOS for this reason. Inside `$( … )`, write `case`
 patterns with the leading parenthesis, `(pattern)`, which every POSIX shell accepts.
 
 ## `set -e` and `&&`
 
-`cmd && { ...; }` looks like a conditional and is not. When `cmd` returns non-zero, the list
-returns non-zero, and under `set -e` the shell exits. Use an explicit `if`. This kit's smoke test
-caught this in its own example steps on the first run.
+`cmd && { ...; }` looks like a conditional and mostly behaves like one: `set -e` ignores a failure
+anywhere in an `&&` list except the last command, so the line itself does not stop the script. The
+trap is the list's exit status. When `cmd` is false the list returns non-zero, and if that line is
+the last command in a function or a script, that status becomes the function's or the script's —
+and the caller, under `set -e`, exits. Use an explicit `if`, which returns zero when its condition
+is false. This kit's smoke test caught this in its own example steps on the first run.
 
 ## Version-controlling inside a sync folder
 
@@ -78,6 +84,23 @@ the first `git add` then tries to hash gigabytes.
 
 Keep the repository on a real local disk. A reading pile or document library may live in sync
 storage; a git repository should not.
+
+## A check defeated by its own template
+
+`validate_state.sh` was meant to fail an iteration past `survey` with an empty success criterion.
+It read everything between `success_criterion:` and the next key, and the template has a comment
+there. The comment was never empty, so neither was the criterion, and the check passed an
+iteration at `analyze` whose criterion was still the placeholder. A quality gate had the same
+shape of fault: an empty measurement became zero, and zero is under any maximum.
+
+A check is only as good as its failing case. Test each one against the input it exists to stop,
+not only against input it should accept. The smoke test now does.
+
+## Ignore rules that do not travel
+
+The kit's `.gitignore` sat at the top of the kit, outside `scaffold/`, so copying the scaffold into
+a new project brought no ignore rules with it. The first `git add -A` after a run staged `.env` and
+`results/`. Anything a copied template depends on has to live inside what is copied.
 
 ## The convenient default that is somebody else's
 

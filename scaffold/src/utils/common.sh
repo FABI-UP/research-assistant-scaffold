@@ -7,7 +7,7 @@
 #   require_input  <path> [<path>...]     # predecessor outputs, checked before work
 #   require_tool   <name> [<name>...]     # hard gate; dies loudly, never skips
 #   emit  <path>                          # declare an output; refuses to write under DRY_RUN
-#   end_step                              # once, last
+#   end_step                              # once, last; records provenance for every output written
 #
 # There is deliberately no soft gate. A step that reports success after silently
 # skipping its real work hands the wrong answer onward, which is worse than a crash.
@@ -23,67 +23,78 @@ die()  { printf '%s [%s] FATAL: %s\n' "$(_ts)" "${STEP_NAME:-init}" "$*" >&2; ex
 warn() { printf '%s [%s] WARN: %s\n' "$(_ts)" "${STEP_NAME:-init}" "$*" >&2; }
 
 # --- configuration -----------------------------------------------------------
-# Reads a dotted key from a restricted YAML subset: two-space indentation,
-# `key: value`, no lists, no anchors, no multi-line scalars. That is all the
-# scaffold's own config uses. If you outgrow it, install PyYAML and this switches
-# to it automatically.
-_yaml_get() {
-  _f="$1"; _key="$2"
-  [ -f "$_f" ] || { printf ''; return 0; }
-  # Two readers are used depending on what is installed, so they MUST agree
-  # exactly. A YAML library returns Python objects: True, False, None. Printed
-  # raw those become "True", "False", "None", which no shell comparison expects
-  # and which the fallback reader would never produce. Normalise them.
-  # SCAFFOLD_YAML_READER=awk forces the fallback; the smoke test uses it to check
-  # the two readers still agree.
-  if [ "${SCAFFOLD_YAML_READER:-auto}" != "awk" ] \
-     && command -v python3 >/dev/null 2>&1 && python3 -c 'import yaml' >/dev/null 2>&1; then
-    python3 - "$_f" "$_key" <<'YAMLREADER'
-import sys, yaml
-doc = yaml.safe_load(open(sys.argv[1])) or {}
-cur = doc
-for part in sys.argv[2].split('.'):
-    if isinstance(cur, dict) and part in cur:
-        cur = cur[part]
-    else:
-        print(''); sys.exit(0)
-if cur is None:    print('')
-elif cur is True:  print('true')
-elif cur is False: print('false')
-else:              print(cur)
-YAMLREADER
-    return 0
-  fi
-  awk -v key="$_key" '
-    function depth(l,  s){ s=match(l, /[^ ]/); return (s-1)/2 }
-    /^[[:space:]]*#/ || /^[[:space:]]*$/ { next }
-    {
-      d = depth($0)
-      line = $0; sub(/^[ ]+/, "", line)
-      k = line; sub(/:.*/, "", k)
-      v = line; sub(/^[^:]*:[ ]?/, "", v)
-      path[d] = k
-      for (i = d+1; i <= 16; i++) path[i] = ""
-      full = path[0]
-      for (i = 1; i <= d; i++) full = full "." path[i]
-      if (full == key && v != "") {
-        gsub(/^["'"'"']|["'"'"']$/, "", v)
-        sub(/[ ]+#.*$/, "", v)
-        print v; exit
-      }
-    }' "$_f"
-}
+# One reader, on purpose. Two readers of one file disagree eventually, and the
+# disagreement is silent (docs/08_pitfalls.md). This one reads a restricted subset
+# of YAML: nested mappings of scalars, indented with spaces (any consistent width),
+# `key: value`, quoted or plain values, comments. Anything else — tabs, list items,
+# multi-line scalars, anchors, inconsistent indentation — is refused with the line
+# number, because a line it misread would quietly fall back to a default.
+# Booleans are normalised to true/false, and null or ~ to empty.
+_YAML_PROG='
+function fail(msg) { printf "%s:%d: %s\n", FILENAME, NR, msg > "/dev/stderr"; exit 2 }
+BEGIN { d = 0; ind[0] = 0; parent = 0 }
+{
+  line = $0
+  sub(/\r$/, "", line)
+  if (line ~ /^[ ]*#/ || line ~ /^[ ]*$/) next
+  if (line ~ /^[ ]*\t/) fail("tab in indentation; YAML allows spaces only")
+  match(line, /^ */); ws = RLENGTH
+  body = substr(line, ws + 1)
+  if (body ~ /^-( |$)/) fail("list item; the config reader handles mappings of scalars only")
+  if (body !~ /^[A-Za-z0-9_-]+:( |$)/) fail("not a `key: value` line")
+  if (ws > ind[d]) {
+    if (!parent) fail("indented under a key that already has a value")
+    d++; ind[d] = ws
+  } else {
+    while (d > 0 && ind[d] > ws) d--
+    if (ind[d] != ws) fail("indentation does not match any enclosing level")
+  }
+  k = body; sub(/:.*/, "", k)
+  v = body; sub(/^[^:]*:[ ]*/, "", v)
+  quoted = 0
+  q = substr(v, 1, 1)
+  if (q == "\"" || q == sq) {
+    j = index(substr(v, 2), q)
+    if (j == 0) fail("unterminated quoted value")
+    rest = substr(v, j + 2); v = substr(v, 2, j - 1); quoted = 1
+    sub(/^ +/, "", rest)
+    if (rest != "" && substr(rest, 1, 1) != "#") fail("text after a quoted value")
+  } else {
+    if (v ~ /^#/) v = ""
+    sub(/[ ]+#.*$/, "", v); sub(/[ ]+$/, "", v)
+    if (v ~ /^[>|][-+0-9]*$/) fail("multi-line scalar; put the value on one line")
+    if (v ~ /^[&*!]/) fail("anchors, aliases and tags are not supported")
+  }
+  path[d] = k
+  full = path[0]
+  for (i = 1; i <= d; i++) full = full "." path[i]
+  parent = (v == "" && !quoted)
+  if (want != "" && full == want && !parent) {
+    if (!quoted) {
+      lv = tolower(v)
+      if (lv == "true" || lv == "yes" || lv == "on") v = "true"
+      else if (lv == "false" || lv == "no" || lv == "off") v = "false"
+      else if (lv == "null" || v == "~") v = ""
+    }
+    print v; exit 0
+  }
+}'
+
+# _yaml <file> [dotted.key] — print the value, or with no key, check the whole file.
+_yaml() { awk -v want="${2:-}" -v sq="'" "$_YAML_PROG" "$1"; }
 
 # cfg <dotted.key> [default]
 # Project config wins over repository defaults.
 cfg() {
   _k="$1"; _default="${2:-}"
   _v=""
-  [ -n "${STEP_CONFIG:-}" ] && _v="$(_yaml_get "$STEP_CONFIG" "$_k")"
-  if [ -z "$_v" ] && [ -n "${PIPELINE_CONFIG:-}" ]; then
-    _v="$(_yaml_get "$PIPELINE_CONFIG" "$_k")"
+  if [ -n "${STEP_CONFIG:-}" ] && [ -f "$STEP_CONFIG" ]; then
+    _v="$(_yaml "$STEP_CONFIG" "$_k")" || die "cannot read $STEP_CONFIG (see above)"
   fi
-  [ -z "$_v" ] && _v="$_default"
+  if [ -z "$_v" ] && [ -n "${PIPELINE_CONFIG:-}" ] && [ -f "$PIPELINE_CONFIG" ]; then
+    _v="$(_yaml "$PIPELINE_CONFIG" "$_k")" || die "cannot read $PIPELINE_CONFIG (see above)"
+  fi
+  if [ -z "$_v" ]; then _v="$_default"; fi
   printf '%s' "$_v"
 }
 
@@ -92,11 +103,25 @@ init_step() {
   STEP_NAME="$1"
   STEP_CONFIG="${2:-}"
   STEP_START="$(_ts)"
-  [ -n "$STEP_CONFIG" ] && [ ! -f "$STEP_CONFIG" ] && die "config not found: $STEP_CONFIG"
+  if [ -n "$STEP_CONFIG" ]; then
+    [ -f "$STEP_CONFIG" ] || die "config not found: $STEP_CONFIG"
+    case "$STEP_CONFIG" in /*) ;; *) STEP_CONFIG="$(pwd)/$STEP_CONFIG" ;; esac
+  fi
   : "${REPO_ROOT:=$(cd "$(dirname "$0")/../.." && pwd)}"
   export REPO_ROOT
+  # Every path in the config is relative to the repository root, wherever the step
+  # was started from. Otherwise a run from a subdirectory writes a second results/ there.
+  cd "$REPO_ROOT" || die "cannot enter the repository root: $REPO_ROOT"
   : "${PIPELINE_CONFIG:=$REPO_ROOT/configs/pipeline.yaml}"
   export PIPELINE_CONFIG
+  # Check each config file whole, here, in the step's own shell. A config read later
+  # inside $( ) could only fail its subshell, and the step would carry on with defaults.
+  for _c in "$PIPELINE_CONFIG" "$STEP_CONFIG"; do
+    if [ -n "$_c" ] && [ -f "$_c" ]; then
+      _yaml "$_c" >/dev/null || die "$_c uses YAML the config reader does not support (see above).
+  Simplify it. Do not let it fall back to defaults."
+    fi
+  done
   if [ "$(cfg run.dry_run false)" = "true" ]; then DRY_RUN=1; fi
   if [ "$DRY_RUN" = "1" ]; then log "start (DRY RUN — writes nothing)"; else log "start"; fi
   log "seed=$(cfg run.seed 1) threads=$(cfg run.threads 1)"
@@ -105,8 +130,17 @@ init_step() {
 end_step() {
   if [ -n "$STEP_OUTPUTS" ]; then
     log "outputs:"
+    _prov="$(cfg paths.reports results/reports)/provenance.tsv"
     printf '%s\n' "$STEP_OUTPUTS" | while IFS= read -r o; do
-      if [ -n "$o" ]; then log "  $o"; fi
+      if [ -z "$o" ]; then continue; fi
+      log "  $o"
+      if [ "$DRY_RUN" != "1" ] && [ -f "$o" ]; then
+        mkdir -p "$(dirname "$_prov")"
+        if [ ! -f "$_prov" ]; then
+          printf 'time\tstep\toutput\tchecksum\tseed\tconfig\n' > "$_prov"
+        fi
+        provenance_line "$o" >> "$_prov"
+      fi
     done
   fi
   log "done (started $STEP_START)"
@@ -159,16 +193,32 @@ skip_if_done() {
   return 1
 }
 
+_isnum() {
+  printf '%s' "$1" | grep -Eq '^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)([eE][+-]?[0-9]+)?$'
+}
+
 # quality_gate LABEL ACTUAL min|max THRESHOLD
 # Assert a measured value before an expensive or irreversible step runs. Stopping
 # here costs an hour; not stopping can cost the whole downstream analysis and,
 # worse, produce a result that looks fine.
 quality_gate() {
   _label="$1"; _actual="$2"; _dir="$3"; _thr="$4"
-  if [ "$(cfg quality.enabled true)" != "true" ]; then
+  case "$_dir" in
+    min|max) ;;
+    *) die "quality gate '$_label': direction must be min or max, not '$_dir'" ;;
+  esac
+  # Fails closed: only an explicit false turns the gates off.
+  _enabled="$(cfg quality.enabled true)"
+  if [ "$_enabled" = "false" ]; then
     log "quality gate '$_label' skipped (quality.enabled is false)"
     return 0
   fi
+  if [ "$_enabled" != "true" ]; then
+    warn "quality.enabled is '$_enabled', which is neither true nor false; the gate stays on"
+  fi
+  _isnum "$_actual" || die "quality gate '$_label': measured value '$_actual' is not a number.
+  A measurement that failed is a failed gate, not a pass."
+  _isnum "$_thr" || die "quality gate '$_label': threshold '$_thr' is not a number"
   _pass=$(awk -v a="$_actual" -v t="$_thr" -v d="$_dir" \
     'BEGIN { print (d == "min" ? (a+0 >= t+0) : (a+0 <= t+0)) ? "1" : "0" }')
   if [ "$_pass" = "1" ]; then
@@ -180,7 +230,15 @@ quality_gate() {
   threshold deliberately in the config — do not comment out the gate."
 }
 
-# provenance_line — one line for the run manifest. Call it from your report step.
+# --- provenance --------------------------------------------------------------
+# checksum <path> — portable content fingerprint (POSIX cksum: CRC and size).
+checksum() { cksum < "$1" | awk '{ print $1 "-" $2 }'; }
+
+# provenance_line <output> — one row of results/reports/provenance.tsv.
+# end_step calls it for every output a step wrote; the report step refuses to
+# finish if a table has no row, or no longer matches its row.
 provenance_line() {
-  printf '%s\t%s\t%s\t%s\n' "$(_ts)" "${STEP_NAME}" "seed=$(cfg run.seed 1)" "$*"
+  _pc="${STEP_CONFIG#"$REPO_ROOT"/}"
+  printf '%s\t%s\t%s\t%s\t%s\t%s\n' "$(_ts)" "$STEP_NAME" "$1" "$(checksum "$1")" \
+    "$(cfg run.seed 1)" "${_pc:-<defaults only>}"
 }

@@ -104,7 +104,9 @@ about to send. Do not discover the answer afterwards.
 ## Conventions
 
 - Steps: `src/steps/NN_name.{{STEP_EXT}}`, one job each, idempotent, `<config>` as the first argument.
-- Outputs: `results/{tables,figures,reports}/`, named `NN_content[_variant].ext`.
+- Outputs: `results/{tables,figures,reports}/`, named `NN_content[_variant].ext`. Never edit a file
+  in `results/` by hand; re-run the step. The report step fails on any table whose provenance does
+  not match.
 - Configuration: `configs/pipeline.yaml` holds defaults; `projects/{slug}/config.yaml` overrides
   them. Read both only through the accessors in `src/utils/`.
 - Secrets: `.env`, never committed. Its shape is `.env.example`.

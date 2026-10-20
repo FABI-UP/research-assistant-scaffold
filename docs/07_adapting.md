@@ -9,6 +9,9 @@ port `src/utils/common.sh` to a module in that language, keeping the function na
 obligations from [the step contract](03_step_contract.md). Orchestration usually stays in shell
 even when steps do not, because it has to run before anything is installed.
 
+`scripts/run_pipeline.sh` runs `.sh`, `.py` and `.R` steps, and stops on an extension it does not
+know rather than skipping the step. Add yours there if you need another.
+
 Mixed languages are fine, and common. Keep one utility module per language rather than one that
 shells out to another — two readers of the same configuration will disagree eventually, and the
 disagreement will be silent.
@@ -22,7 +25,8 @@ committed lockfile answers that.
 ## Compute and scheduler
 
 `templates/job.scheduler.template` carries directive blocks for SLURM, PBS and SGE. Keep yours,
-delete the rest. If you have no scheduler, delete all three and run it as a script — "no scheduler"
+delete the rest. Only the SLURM block is live as shipped; the PBS and SGE lines start with a
+doubled `#`, which you remove if you keep that block. If you have no scheduler, delete all three and run it as a script — "no scheduler"
 is a supported configuration, not a missing one.
 
 On a shared host with no queue, the budget is social rather than enforced. Write the number into
@@ -36,11 +40,13 @@ not instead of it — steps that remain independently runnable stay debuggable.
 
 ## The instruction file
 
-`AGENTS.md` is canonical. Vendor-specific filenames should be one-line pointers to it, so that the
-same project works with whichever assistant you or a collaborator happen to use, and so that
+`AGENTS.md` is canonical. Vendor-specific filenames should import it and say nothing else, so that
+the same project works with whichever assistant you or a collaborator happen to use, and so that
 changing tools does not mean rewriting your standing brief. The kit ships `CLAUDE.md` and
-`GEMINI.md` pointers; many assistants read `AGENTS.md` directly. If yours looks for another
-filename, add a one-line pointer with that name.
+`GEMINI.md`, each of which imports it with `@AGENTS.md`. Use an import rather than a link: an
+assistant loads an imported file at the start of every session, while a link only works if it
+decides to follow it, and the boot sequence lives in `AGENTS.md`. Many assistants read `AGENTS.md`
+directly. If yours looks for another filename, add one the same way.
 
 ## What not to change
 

@@ -1,0 +1,14 @@
+# The numbers this iteration produced, each with an evidence tier.
+# scripts/validate_state.sh fails any metric without a valid tier.
+#   benchmarked   measured on data like ours
+#   consensus     agreed across several independent sources
+#   single_study  one paper said so
+#   inferred      reasoning, not measurement
+schema_version: 1
+metrics: []
+
+# Example entry — replace [] above with a list like this:
+#   - name: example_metric
+#     value: 0.0
+#     tier: inferred
+#     source: results/tables/01_example.tsv
