@@ -4,6 +4,9 @@ All notable changes to this kit are recorded here. Dates are ISO-8601.
 
 ## [Unreleased]
 
+- `docs/02_setup_guide.md`: step 2 names `docs/architecture.md`, which also has placeholders, and
+  deletes `.scaffold-unconfigured` only after both files are filled.
+
 ## [0.3.0] — 2026-10-22
 
 ### Upgrading from 0.2

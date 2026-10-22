@@ -37,11 +37,13 @@ git add -A && git commit -m "Scaffold from research-assistant-scaffold v0.3"
 The copy includes the scaffold's `.gitignore`, which keeps `.env`, `results/` and `logs/` out of
 git. Check it is there before the first `git add`.
 
-**2. Fill in the instruction file.** Delete `.scaffold-unconfigured` when you are done — that
-marker is what tells the convention checker this is still an unfilled template, and while it exists
-the placeholder check is skipped. `templates/` and `projects/_template/` keep their placeholders;
-the checker leaves them alone. Open `AGENTS.md` and replace every `{{PLACEHOLDER}}` with your
-answers from above. This file is the assistant's standing brief; everything else is detail.
+**2. Fill in the instruction file and the architecture note.** Open `AGENTS.md` and replace every
+`{{PLACEHOLDER}}` with your answers from above. Then do the same in `docs/architecture.md`, which
+records the same choices: project name, step language, environment, compute and scheduler.
+`AGENTS.md` is the assistant's standing brief; everything else is detail. `templates/` and
+`projects/_template/` keep their placeholders; the checker leaves them alone. When both files are
+filled, delete `.scaffold-unconfigured`. That marker tells the convention checker this is still an
+unfilled template, and while it exists the placeholder check is skipped.
 
 Read what you have written as if you were a capable new colleague who knows nothing about the
 project. If a sentence would not be enough for them, it is not enough for the assistant.
