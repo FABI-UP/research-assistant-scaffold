@@ -1,0 +1,28 @@
+# Runs every check on each kind of machine the kit is meant for: Linux, where sh is
+# dash, and macOS, where sh is bash 3.2. Testing only where you wrote it is how the
+# library checker shipped without ever having run on macOS (docs/08_pitfalls.md).
+name: checks
+on:
+  push:
+  pull_request:
+jobs:
+  checks:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Scaffold smoke test (sh)
+        run: sh scaffold/tests/smoke_test.sh
+      - name: Scaffold smoke test (bash)
+        run: bash scaffold/tests/smoke_test.sh
+      - name: Convention checks
+        run: sh scaffold/scripts/check_conventions.sh
+      - name: State validator on the shipped scaffold
+        run: sh scaffold/scripts/validate_state.sh
+      - name: Library profile test (sh)
+        run: sh tests/library_test.sh
+      - name: Library profile test (bash)
+        run: bash tests/library_test.sh

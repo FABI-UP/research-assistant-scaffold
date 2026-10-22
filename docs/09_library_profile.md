@@ -41,7 +41,8 @@ Five steps per item, in order:
 1. **Identify it from the item itself** — its own title page or metadata. Not from the filename,
    which is usually a download ID, and not from a search result.
 2. **Rename to the convention.** `Author_Year_keywords.ext` by default; set your own in
-   `library.yaml`.
+   `library.yaml`. Multi-part surnames are allowed (`van_der_Merwe_2021_…`); write accented letters
+   and apostrophes in plain ASCII.
 3. **Check for duplicates.** Identical bytes are easy. The same item downloaded twice differs in
    bytes and needs a content comparison. Same author and year is **not** a duplicate — assuming it
    is produces false merges, and several distinct `Wang_2020` papers is the normal case.

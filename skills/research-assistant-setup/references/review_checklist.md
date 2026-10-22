@@ -2,7 +2,8 @@
 
 Structure
 
-- [ ] No `{{PLACEHOLDER}}` remains anywhere. `grep -rn '{{' .` returns nothing.
+- [ ] `.scaffold-unconfigured` has been deleted, and `sh scripts/check_conventions.sh` reports no
+      unfilled placeholders. (`templates/` and `projects/_template/` keep theirs by design.)
 - [ ] `AGENTS.md` uses the researcher's own vocabulary, not the template's.
 - [ ] Exactly one project has `active: true`.
 - [ ] The active project's `current_iteration` directory exists and holds `iteration.yaml`.
@@ -21,7 +22,8 @@ Limits
 
 - [ ] The reachable / not-reachable / protected lists are filled from the researcher's answers, not
       from assumption, and none is empty without them having said so.
-- [ ] `.env` is gitignored; `.env.example` records the shape and no values.
+- [ ] `.gitignore` came across with the scaffold and ignores `.env`, `results/` and `logs/`;
+      `.env.example` records the shape and no values.
 - [ ] No credential, absolute path, username or hostname appears in any committed file.
 
 Library profile only

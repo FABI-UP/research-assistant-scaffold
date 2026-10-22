@@ -80,7 +80,6 @@ un=$(printf '%s\n' "$unid" | grep -c . || true)
 if [ "$un" = "0" ]; then ok "no unidentified items"
 else
   note "$un item(s) carry the unidentified marker — correct, if each is logged"
-  missing=0
   printf '%s\n' "$unid" | while IFS= read -r f; do
     [ -n "$f" ] || continue
     b=$(basename "$f")
@@ -112,22 +111,26 @@ else
 fi
 
 # --- 6. the index agrees with the filesystem --------------------------------
-logged=$(grep -oE '\*\*Totals:\*\*[^|]*' "$ROOT/INDEX.md" 2>/dev/null | grep -oE '[0-9]+' | head -2 | tail -1 || true)
+# The Totals line reads "N distinct items | N files | ..."; compare the files figure.
+logged=$(grep -E '\*\*Totals:\*\*' "$ROOT/INDEX.md" 2>/dev/null | grep -oE '[0-9]+ files' | head -1 | grep -oE '[0-9]+' || true)
 if [ -n "$logged" ]; then
   if [ "$logged" = "$total" ]; then ok "INDEX.md file total ($logged) matches the filesystem ($total)"
   else bad "INDEX.md logs $logged files, the filesystem has $total — flag the gap in the update log, do not silently overwrite"; fi
 else
-  note "no totals line parsed from INDEX.md"
+  note "no 'N files' figure parsed from the Totals line in INDEX.md"
 fi
 
 # --- 7. is a refresh overdue ------------------------------------------------
+# Day numbers from the civil calendar, in plain awk: mktime and systime are GNU
+# extensions that the awk on macOS does not have.
 lastv=$(grep -oE '\*\*Last verified:\*\*[[:space:]]*[0-9]{4}-[0-9]{2}-[0-9]{2}' "$ROOT/INDEX.md" 2>/dev/null | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}' || true)
 if [ -n "$lastv" ] && [ -n "$REFRESH" ]; then
-  days=$(awk -v d="$lastv" 'BEGIN{
-    split(d,a,"-");
-    t=mktime(a[1]" "a[2]" "a[3]" 00 00 00");
-    if (t<0) { print -1 } else { print int((systime()-t)/86400) } }' 2>/dev/null || echo -1)
-  if [ "$days" -lt 0 ]; then note "could not compute days since last verification"
+  days=$(awk -v a="$lastv" -v b="$(date -u +%Y-%m-%d)" '
+    function dn(s,  p, y, m) { split(s, p, "-"); y = p[1] + 0; m = p[2] + 0
+      if (m < 3) { y--; m += 12 }
+      return 365*y + int(y/4) - int(y/100) + int(y/400) + int((153*(m-3) + 2)/5) + p[3] }
+    BEGIN { print dn(b) - dn(a) }')
+  if [ "$days" -lt 0 ]; then note "last verified date $lastv is in the future"
   elif [ "$days" -gt "$REFRESH" ]; then note "last verified $days days ago; the refresh interval is $REFRESH — a maintenance pass is due"
   else ok "verified $days days ago, within the $REFRESH-day refresh interval"; fi
 fi

@@ -1,1 +1,4 @@
-See [AGENTS.md](AGENTS.md). That file is canonical; this one exists only so vendor tooling finds it.
+@AGENTS.md
+
+AGENTS.md is canonical. This file only imports it, so that vendor tooling which looks for this
+filename loads the same instructions. Put nothing else here.

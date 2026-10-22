@@ -4,6 +4,61 @@ All notable changes to this kit are recorded here. Dates are ISO-8601.
 
 ## [Unreleased]
 
+Fixes from a review of v0.2 against the paper. Each was reproduced first and now has a test.
+
+- `scaffold/.gitignore`: the scaffold now ships its own ignore rules. The only `.gitignore` sat at
+  the kit root, so a project copied from `scaffold/` had none, and the first `git add -A` after a
+  run staged `.env` and `results/`. `check_conventions.sh` now checks that `.env`, `results/` and
+  `logs/` are ignored.
+- `scripts/check_conventions.sh`: the placeholder check no longer fails every configured
+  repository. It flagged `templates/job.scheduler.template` and `validate_state.sh`, which hold
+  placeholders by design, so the smoke test failed as soon as `.scaffold-unconfigured` was deleted.
+  It now skips `templates/` and matches only `{{NAME}}` tokens. The leak check no longer skips
+  files with spaces in their names.
+- `scripts/validate_state.sh`: the success-criterion check passed an iteration at `analyze` whose
+  criterion was empty or still the placeholder, because it read the template's comment line as the
+  value. It now reads the value only, and fails any placeholder left in `iteration.yaml`. It also
+  checks that registered projects exist, that a registry `current_iteration` agrees with
+  `project.yaml`, and that every metric in `metrics.yaml` has a valid evidence tier.
+- `src/utils/common.sh`, configuration: one reader instead of two. The fallback reader returned
+  the default for a key indented with four spaces or a tab, and returned `7"` for `"7" # note`;
+  the smoke test that compared the readers passed by comparing the fallback with itself where
+  PyYAML was absent. The reader now handles any consistent space indentation and quoted values,
+  and stops the step with the line number on anything it does not support. `init_step` checks
+  each config file whole, in the step's own shell.
+- `src/utils/common.sh`, `quality_gate`: fails closed. An empty or non-numeric measurement used to
+  pass a `max` gate, and `quality.enabled: yes` switched gates off. Now a non-number fails the gate
+  and only `false` turns gates off.
+- Provenance: `end_step` appends a row to `results/reports/provenance.tsv` for every output it
+  wrote. `99_report.sh` fails if any table has no row or no longer matches it, and the manifest
+  now records config checksums, the system, tool versions from `provenance.tools` and table
+  checksums.
+- `scripts/run_pipeline.sh`: runs `.sh`, `.py` and `.R` steps and stops on any other extension. It
+  used to run only `*.sh`, so a Python step was skipped and the run still reported success. Steps
+  now run from the repository root, so a run from a subdirectory no longer writes a second
+  `results/` there.
+- `projects/_template/iterations/001/`: `literature.yaml`, `experiments.yaml`, `metrics.yaml` and
+  `findings.md` now ship. The README and docs referred to them but the template did not have them.
+  `registry.yaml` no longer duplicates `current_iteration`.
+- `templates/job.scheduler.template`: a shebang on the first line (SLURM rejects a script without
+  one), a note that PBS and SGE directives are switched off with a doubled `#`, and no reference to
+  a `scripts/make_job.sh` that did not exist.
+- `scaffold-library/scripts/check_library.sh`: the index check compared the distinct-items figure
+  with the file count, so a deliberate repeat copy failed it; it now reads the files figure. The
+  refresh check used `mktime` and `systime`, which macOS awk lacks, so it never ran there; it now
+  uses plain arithmetic. The naming pattern accepts multi-part surnames such as `van_der_Merwe`.
+- `CLAUDE.md` and `GEMINI.md` import `AGENTS.md` with `@AGENTS.md` rather than linking to it, so
+  the boot sequence is loaded rather than left for the assistant to find.
+- The setup skill finds the kit before using it, deletes `.scaffold-unconfigured`, and reads its
+  `references/` files, which it never mentioned before.
+- `tests/library_test.sh` and `.github/workflows/checks.yml`: the library profile has a test, and CI
+  runs every test on Linux and macOS.
+- Rule titles 5 and 6 in `README.md` and `docs/10_prompts.md` follow the current draft of the paper.
+- `docs/08_pitfalls.md`: the `set -e` and `&&` entry is corrected, and two new entries cover a check
+  defeated by its own template and ignore rules that do not travel with a copied template.
+- `AGENTS.md`: the rule against personal identifiers now applies to the profiles, skill and docs,
+  with attribution kept to `LICENSE`, `LICENSE-docs` and `CITATION.cff`.
+
 - `docs/10_prompts.md`: points to PromptLab (Sharpton et al. 2026) as the task-level counterpart
   of the project-level prompts here.
 - `scaffold-library/scripts/check_library.sh`: a case pattern inside a command substitution failed

@@ -23,6 +23,20 @@ side by side. Ask; do not assume the repository profile because it is listed fir
 
 Copy from those directories. Do not invent a structure.
 
+## Find the kit first
+
+This skill does not carry the scaffold; it reads it from the kit it ships in. The **kit root** is the
+directory that contains `scaffold/`, `scaffold-library/` and `docs/`. Look for it two levels above
+this file, resolving any symlink first (`skills/research-assistant-setup/SKILL.md` lives at
+`<kit root>/skills/research-assistant-setup/`). If it is not there, ask the researcher where their
+copy of the kit is. If they have none, offer to clone
+`https://github.com/FABI-UP/research-assistant-scaffold` somewhere outside their project, and
+wait for a yes. Do not reconstruct the scaffold from memory.
+
+Below, `scaffold/`, `scaffold-library/` and `docs/01_…` to `docs/10_…` mean those paths in the
+kit root. `docs/architecture.md` is the one exception: it is the file inside the researcher's new
+project.
+
 ## Before you start
 
 Read `docs/01_concepts.md` so you can answer "why" when asked. Read `docs/08_pitfalls.md` before
@@ -36,7 +50,8 @@ Point them to `docs/10_prompts.md`, which works without it.
 ## Step 1 — Interview
 
 Ask these in small groups, not as a wall. Let their answers shape the follow-ups. Ten questions is
-usually enough; five is not.
+usually enough; five is not. Read [references/interview_notes.md](references/interview_notes.md)
+before you start: it covers the answers people usually give quickly and get wrong.
 
 **About the work**
 
@@ -103,11 +118,16 @@ rename in bulk from filenames. Then skip to Step 3.
 5. Start the Decisions section of `docs/architecture.md` with the decisions taken in the interview
    (profile, language, environment, compute, scheduler, the protected list), each dated with its
    reason. Then write the project's first `handover.md` from `projects/_template/handover.md`.
-6. If their steps are not shell, port `src/utils/common.sh` to their language, keeping the function
+6. Delete `.scaffold-unconfigured`. While it exists the convention checker skips its placeholder
+   check, so a repository that still carries the marker has never had that check run.
+7. If their steps are not shell, port `src/utils/common.sh` to their language, keeping the function
    names and all seven obligations in `docs/03_step_contract.md`. Do not shell out to another
    language's reader — two readers of one config disagree eventually, and silently.
-7. Keep the scheduler block they use in `templates/job.scheduler.template`; delete the others.
-8. Do **not** write any analysis steps yet. The example steps stay until there is a real workflow
+   Add their extension to `scripts/run_pipeline.sh` if it is not `.sh`, `.py` or `.R`.
+8. Keep the scheduler block they use in `templates/job.scheduler.template`; delete the others. If
+   it is the PBS or SGE block, remove the extra `#` from each directive line, as the template says.
+9. Add the external tools their steps will call to `provenance.tools` in `configs/pipeline.yaml`.
+10. Do **not** write any analysis steps yet. The example steps stay until there is a real workflow
    to replace them with.
 
 ## Step 3 — Verify, and show your work
@@ -127,7 +147,9 @@ sh scripts/check_library.sh
 ```
 
 They must pass before you hand over. If the smoke test fails, fix it — do not describe it as a
-known limitation.
+known limitation. Then go through
+[references/review_checklist.md](references/review_checklist.md) item by item, and report any
+item you could not tick.
 
 Then tell the researcher, in a short paragraph each:
 

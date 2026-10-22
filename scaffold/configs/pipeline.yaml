@@ -21,6 +21,11 @@ run:
 quality:
   enabled: true
 
+# External tools your steps call, space-separated. The report step requires each
+# one and records its --version in the run manifest.
+provenance:
+  tools: ""
+
 # How the assistant should behave when a parameter could be chosen automatically.
 #   auto_tune — choose it, record the choice and the reason
 #   ask       — stop and ask the researcher

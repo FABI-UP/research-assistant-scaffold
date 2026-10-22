@@ -1,0 +1,11 @@
+# What was actually read in this iteration — not what was found.
+# Each entry was checked against the item itself. Anything that could not be is
+# marked UNVERIFIED, never dropped and never filled in from memory.
+schema_version: 1
+sources: []
+
+# Example entry — replace [] above with a list like this:
+#   - id: doi:10.0000/example        # DOI, accession, ISBN or URL; UNVERIFIED if not looked up
+#     citation: Author A, Author B. Title. Journal. Year.
+#     read: full                      # full | partial | abstract — say which
+#     used_for: one line

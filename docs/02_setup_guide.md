@@ -34,9 +34,13 @@ cp -R /path/to/this-kit/scaffold/. .
 git add -A && git commit -m "Scaffold from research-assistant-scaffold v0.2"
 ```
 
+The copy includes the scaffold's `.gitignore`, which keeps `.env`, `results/` and `logs/` out of
+git. Check it is there before the first `git add`.
+
 **2. Fill in the instruction file.** Delete `.scaffold-unconfigured` when you are done — that
 marker is what tells the convention checker this is still an unfilled template, and while it exists
-the placeholder check is skipped. Open `AGENTS.md` and replace every `{{PLACEHOLDER}}` with your
+the placeholder check is skipped. `templates/` and `projects/_template/` keep their placeholders;
+the checker leaves them alone. Open `AGENTS.md` and replace every `{{PLACEHOLDER}}` with your
 answers from above. This file is the assistant's standing brief; everything else is detail.
 
 Read what you have written as if you were a capable new colleague who knows nothing about the
@@ -49,7 +53,7 @@ sh tests/smoke_test.sh
 sh scripts/check_conventions.sh
 ```
 
-Ten checks and four convention checks, no dependencies. Do this before you write a line of science. If it fails now, you will
+The smoke test and five convention checks, no dependencies. Do this before you write a line of science. If it fails now, you will
 not know later whether the failure is yours or the scaffold's.
 
 **4. Open your first project.**
@@ -66,7 +70,8 @@ Edit `projects/my-first-question/project.yaml` and
 sh scripts/validate_state.sh
 ```
 
-It refuses to pass while placeholders remain, which is the point.
+It refuses to pass while placeholders remain in `project.yaml` or `iteration.yaml`, which is the
+point.
 
 **5. Write the success criterion before anything else.** In `iteration.yaml`, state what result
 would count as which answer. Do this before the assistant sees any data.
