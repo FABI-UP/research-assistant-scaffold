@@ -4,6 +4,21 @@ All notable changes to this kit are recorded here. Dates are ISO-8601.
 
 ## [Unreleased]
 
+## [0.3.0] — 2026-10-22
+
+### Upgrading from 0.2
+
+- Results made under 0.2 have no provenance rows, so `99_report.sh` refuses them. Re-run the steps
+  that make each table with `FORCE=1`.
+- The config reader no longer switches to PyYAML when it is installed. A config that only PyYAML
+  could read — list items, multi-line scalars, anchors — now stops the step with the line number.
+  Rewrite it as nested `key: value` mappings. Tab indentation, which 0.2 silently replaced with
+  defaults, also stops the step.
+- A project copied from `scaffold/` under 0.2 has no `.gitignore` of its own. Check that `.env`,
+  `results/` and `logs/` are ignored there before the next commit.
+
+### Fixed
+
 Fixes from a review of v0.2 against the paper. Each was reproduced first and now has a test.
 
 - `scaffold/.gitignore`: the scaffold now ships its own ignore rules. The only `.gitignore` sat at
@@ -59,6 +74,9 @@ Fixes from a review of v0.2 against the paper. Each was reproduced first and now
 - `AGENTS.md`: the rule against personal identifiers now applies to the profiles, skill and docs,
   with attribution kept to `LICENSE`, `LICENSE-docs` and `CITATION.cff`.
 
+### Also since 0.2.0
+
+- `README.md` status and the example commit message in `docs/02_setup_guide.md` name v0.3.
 - `docs/10_prompts.md`: points to PromptLab (Sharpton et al. 2026) as the task-level counterpart
   of the project-level prompts here.
 - `scaffold-library/scripts/check_library.sh`: a case pattern inside a command substitution failed

@@ -84,7 +84,7 @@ else — Python, R, conda, a cluster — depends on what you choose during setup
 
 ## Status
 
-v0.2, under review by collaborators before the first archived release. Expect the layout to move.
+v0.3, under review by collaborators before the first archived release. Expect the layout to move.
 See `CHANGELOG.md`.
 
 ## How this was built

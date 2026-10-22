@@ -31,7 +31,7 @@ clients hold locks on files that git needs to move, and the failures are confusi
 ```sh
 git init my-research-assistant && cd my-research-assistant
 cp -R /path/to/this-kit/scaffold/. .
-git add -A && git commit -m "Scaffold from research-assistant-scaffold v0.2"
+git add -A && git commit -m "Scaffold from research-assistant-scaffold v0.3"
 ```
 
 The copy includes the scaffold's `.gitignore`, which keeps `.env`, `results/` and `logs/` out of
